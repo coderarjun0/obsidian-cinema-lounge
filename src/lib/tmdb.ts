@@ -78,24 +78,29 @@ function mapBasicMovie(m: TmdbMovie): Movie {
   };
 }
 
-export async function getTrending(): Promise<Movie[]> {
-  const data = await tmdbFetch<{ results: TmdbMovie[] }>("/trending/movie/week?language=en-US");
-  return data.results.slice(0, 18).map(mapBasicMovie);
+interface PaginatedResult {
+  movies: Movie[];
+  totalPages: number;
 }
 
-export async function discoverByGenre(genreId: number): Promise<Movie[]> {
-  const data = await tmdbFetch<{ results: TmdbMovie[] }>(
-    `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&language=en-US&page=1`
-  );
-  return data.results.slice(0, 18).map(mapBasicMovie);
+export async function getTrending(page = 1): Promise<PaginatedResult> {
+  const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(`/trending/movie/week?language=en-US&page=${page}`);
+  return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
 }
 
-export async function searchMovies(query: string): Promise<Movie[]> {
-  if (!query.trim()) return [];
-  const data = await tmdbFetch<{ results: TmdbMovie[] }>(
-    `/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=1`
+export async function discoverByGenre(genreId: number, page = 1): Promise<PaginatedResult> {
+  const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(
+    `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&language=en-US&page=${page}`
   );
-  return data.results.slice(0, 18).map(mapBasicMovie);
+  return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
+}
+
+export async function searchMovies(query: string, page = 1): Promise<PaginatedResult> {
+  if (!query.trim()) return { movies: [], totalPages: 0 };
+  const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(
+    `/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}`
+  );
+  return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
 }
 
 export async function getMovieDetail(id: number): Promise<Movie> {

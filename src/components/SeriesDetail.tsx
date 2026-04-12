@@ -22,6 +22,10 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
     };
   }, [onClose]);
 
+  const trailerUrl = series.trailerKey
+    ? "https://www.youtube.com/watch?v=" + series.trailerKey
+    : null;
+
   return (
     <AnimatePresence>
       <motion.div
@@ -40,7 +44,6 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
           exit={{ y: 60, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          {/* Backdrop image */}
           <div className="relative h-64 overflow-hidden rounded-t-3xl">
             <img src={series.backdropUrl} alt={series.title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
@@ -53,7 +56,6 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
             </button>
           </div>
 
-          {/* Content */}
           <div className="px-6 pb-8 -mt-10 relative">
             <div className="flex gap-4 items-end mb-6">
               <img src={series.posterUrl} alt={series.title} className="w-24 rounded-xl shadow-2xl shrink-0 border border-border" />
@@ -69,10 +71,19 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
                   <span>·</span>
                   <span>{series.year}</span>
                   {series.numberOfSeasons && (
-                    <><span>·</span><span className="flex items-center gap-1"><Tv className="h-3 w-3" />{series.numberOfSeasons} Seasons</span></>
+                    <>
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <Tv className="h-3 w-3" />
+                        {series.numberOfSeasons} Seasons
+                      </span>
+                    </>
                   )}
                   {series.numberOfEpisodes && (
-                    <><span>·</span><span>{series.numberOfEpisodes} Episodes</span></>
+                    <>
+                      <span>·</span>
+                      <span>{series.numberOfEpisodes} Episodes</span>
+                    </>
                   )}
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-2">
@@ -88,21 +99,26 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
             <p className="font-body text-sm leading-relaxed text-muted-foreground mb-6">{series.overview}</p>
 
             <div className="flex gap-3 mb-8 flex-wrap">
-    {series.trailerKey && (
-  
-    href={"https://www.youtube.com/watch?v=" + series.trailerKey}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
-    style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
-  >
-    <Play className="h-4 w-4 fill-white" /> Watch Trailer
-  </a>
-)}              <button
+              {trailerUrl && (
+                
+                  href={trailerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+                  style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
+                >
+                  <Play className="h-4 w-4 fill-white" /> Watch Trailer
+                </a>
+              )}
+              <button
                 onClick={isInVault ? onRemoveFromVault : onAddToVault}
                 className="glass-panel flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-semibold uppercase tracking-wider transition-all hover:border-purple-400/50 hover:text-purple-400 active:scale-95"
               >
-                {isInVault ? <><Check className="h-4 w-4" /> In Vault</> : <><Plus className="h-4 w-4" /> Add to Vault</>}
+                {isInVault ? (
+                  <><Check className="h-4 w-4" /> In Vault</>
+                ) : (
+                  <><Plus className="h-4 w-4" /> Add to Vault</>
+                )}
               </button>
             </div>
 

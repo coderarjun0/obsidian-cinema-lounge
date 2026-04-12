@@ -18,7 +18,7 @@ export default function Landing() {
             <Film className="w-8 h-8 text-primary" />
           </div>
           <span className="font-heading text-2xl font-bold tracking-wide">
-            Cinema Lounge
+            CineSync
           </span>
         </div>
 
@@ -34,26 +34,12 @@ export default function Landing() {
         </p>
 
         {/* CTA */}
-        <div className="relative flex flex-col sm:flex-row gap-4">
-          <button
-            onClick={() => navigate("/browse")}
-            className="px-8 py-3 rounded-xl bg-primary text-primary-foreground font-heading font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
-          >
-            Enter the Lounge
-          </button>
-          <button
-            onClick={() => navigate("/browse")}
-            className="px-8 py-3 rounded-xl border border-border font-heading font-semibold text-base hover:bg-muted/50 transition-colors"
-          >
-            Browse Films
-          </button>
-        </div>
-
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-muted-foreground text-xs font-body flex flex-col items-center gap-1">
-          <span>scroll to explore</span>
-          <div className="w-px h-6 bg-muted-foreground/30" />
-        </div>
+        <button
+          onClick={() => navigate("/browse")}
+          className="px-10 py-4 rounded-xl bg-primary text-primary-foreground font-heading font-bold text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-100 border border-primary/30"
+        >
+          Enter the Lounge →
+        </button>
       </div>
 
       {/* Features */}
@@ -103,7 +89,7 @@ export default function Landing() {
         </p>
         <button
           onClick={() => navigate("/browse")}
-          className="px-10 py-3 rounded-xl bg-primary text-primary-foreground font-heading font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+          className="px-10 py-4 rounded-xl bg-primary text-primary-foreground font-heading font-bold text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-100 border border-primary/30"
         >
           Start Exploring →
         </button>
@@ -111,7 +97,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="text-center py-6 text-xs font-body text-muted-foreground border-t border-border">
-        Cinema Lounge · Powered by TMDB
+        CineSync · Powered by TMDB
       </footer>
     </div>
   );

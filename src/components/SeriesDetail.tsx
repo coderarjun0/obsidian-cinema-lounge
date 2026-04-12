@@ -100,8 +100,8 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
 
             <div className="flex gap-3 mb-8 flex-wrap">
               {trailerUrl && (
-                
-                  href={trailerUrl}
+  
+    href={trailerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"

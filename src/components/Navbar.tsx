@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Film, User, LogOut } from "lucide-react";
+import { motion } from "framer-motion";
 import SearchBar from "./SearchBar";
 import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/useAuth";
+import { useModeStore } from "@/store/useModeStore";
 
 interface NavbarProps {
   searchQuery: string;
@@ -13,6 +15,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
   const { user, signOut } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const { activeMode, setMode } = useModeStore();
 
   return (
     <>
@@ -26,7 +29,46 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
               </span>
             </div>
 
-            {/* Auth button */}
+            {/* Mode Toggle */}
+            <button
+              onClick={() => setMode(activeMode === "movies" ? "series" : "movies")}
+              className="relative flex items-center rounded-full p-1 shrink-0 cursor-pointer"
+              style={{
+                background: "hsl(var(--secondary))",
+                border: "1px solid hsl(var(--border))",
+                width: 120,
+                height: 32,
+              }}
+            >
+              <motion.div
+                className="absolute top-1 bottom-1 rounded-full z-0"
+                animate={{ left: activeMode === "movies" ? 4 : 60 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                style={{
+                  width: 56,
+                  background: activeMode === "movies"
+                    ? "linear-gradient(135deg, #FFD700cc, #00E5FF44)"
+                    : "linear-gradient(135deg, #A855F7, #7C3AED)",
+                  boxShadow: activeMode === "movies"
+                    ? "0 0 10px #FFD70055"
+                    : "0 0 10px #A855F755",
+                }}
+              />
+              <span
+                className="relative z-10 flex-1 text-center font-heading text-[10px] font-bold uppercase tracking-wider transition-colors"
+                style={{ color: activeMode === "movies" ? "#000" : "hsl(var(--muted-foreground))" }}
+              >
+                Films
+              </span>
+              <span
+                className="relative z-10 flex-1 text-center font-heading text-[10px] font-bold uppercase tracking-wider transition-colors"
+                style={{ color: activeMode === "series" ? "#fff" : "hsl(var(--muted-foreground))" }}
+              >
+                Series
+              </span>
+            </button>
+
+            {/* Auth */}
             {user ? (
               <div className="relative">
                 <button
@@ -66,7 +108,6 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
           <SearchBar value={searchQuery} onChange={onSearchChange} />
         </div>
       </nav>
-
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </>
   );

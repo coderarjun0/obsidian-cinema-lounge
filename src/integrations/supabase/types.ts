@@ -14,7 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      vault: {
+        Row: {
+          created_at: string
+          id: string
+          movie_data: Json
+          movie_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movie_data: Json
+          movie_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movie_data?: Json
+          movie_id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

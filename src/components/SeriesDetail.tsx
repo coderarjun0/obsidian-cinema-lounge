@@ -88,18 +88,17 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
             <p className="font-body text-sm leading-relaxed text-muted-foreground mb-6">{series.overview}</p>
 
             <div className="flex gap-3 mb-8 flex-wrap">
-              {series.trailerKey && (
-                
-                  href={`https://www.youtube.com/watch?v=${series.trailerKey}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
-                  style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
-                >
-                  <Play className="h-4 w-4 fill-white" /> Watch Trailer
-                </a>
-              )}
-              <button
+    {series.trailerKey && (
+  
+    href={"https://www.youtube.com/watch?v=" + series.trailerKey}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+    style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
+  >
+    <Play className="h-4 w-4 fill-white" /> Watch Trailer
+  </a>
+)}              <button
                 onClick={isInVault ? onRemoveFromVault : onAddToVault}
                 className="glass-panel flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-semibold uppercase tracking-wider transition-all hover:border-purple-400/50 hover:text-purple-400 active:scale-95"
               >

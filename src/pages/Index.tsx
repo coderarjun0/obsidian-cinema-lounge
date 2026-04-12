@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import CinemaHero from "@/components/CinemaHero";
 import DiscoveryGrid from "@/components/DiscoveryGrid";
@@ -14,54 +14,68 @@ export default function Index() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [activeGenre, setActiveGenre] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const { vault, addToVault, removeFromVault, isInVault } = useVault();
 
-  // Load trending on mount
-  useEffect(() => {
-    getTrending().then((data) => {
-      setMovies(data);
+  const fetchPage = useCallback(async (p: number, query: string, genre: number, append: boolean) => {
+    if (append) setLoadingMore(true); else setLoading(true);
+    try {
+      const result = query.trim()
+        ? await searchMovies(query, p)
+        : genre === 0
+          ? await getTrending(p)
+          : await discoverByGenre(genre, p);
+      setMovies((prev) => append ? [...prev, ...result.movies] : result.movies);
+      setTotalPages(result.totalPages);
+      setPage(p);
+    } finally {
       setLoading(false);
-    }).catch(() => setLoading(false));
+      setLoadingMore(false);
+    }
   }, []);
+
+  // Initial load
+  useEffect(() => {
+    fetchPage(1, "", 0, false);
+  }, [fetchPage]);
 
   // Search effect
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      // When search clears, reload based on active genre
-      if (activeGenre === 0) {
-        getTrending().then(setMovies);
-      } else {
-        discoverByGenre(activeGenre).then(setMovies);
-      }
-      return;
-    }
     const timer = setTimeout(() => {
-      setLoading(true);
-      searchMovies(searchQuery).then((data) => {
-        setMovies(data);
-        setLoading(false);
-      });
-    }, 400);
+      fetchPage(1, searchQuery, activeGenre, false);
+    }, searchQuery.trim() ? 400 : 0);
     return () => clearTimeout(timer);
-  }, [searchQuery, activeGenre]);
+  }, [searchQuery, activeGenre, fetchPage]);
 
-  // Genre filter effect
+  // Genre change
   const handleGenreChange = useCallback((genreId: number) => {
     setActiveGenre(genreId);
     setSearchQuery("");
-    setLoading(true);
-    const fetcher = genreId === 0 ? getTrending() : discoverByGenre(genreId);
-    fetcher.then((data) => {
-      setMovies(data);
-      setLoading(false);
-    });
   }, []);
+
+  // Infinite scroll via IntersectionObserver
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && !loadingMore && page < totalPages) {
+          fetchPage(page + 1, searchQuery, activeGenre, true);
+        }
+      },
+      { rootMargin: "400px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [page, totalPages, loading, loadingMore, searchQuery, activeGenre, fetchPage]);
 
   const handleSelectMovie = useCallback(async (movie: Movie) => {
     try {
-      const detail = await getMovieDetail(movie.id);
-      setSelectedMovie(detail);
+      setSelectedMovie(await getMovieDetail(movie.id));
     } catch {
       setSelectedMovie(movie);
     }
@@ -111,12 +125,23 @@ export default function Index() {
               ))}
             </div>
           ) : (
-            <DiscoveryGrid
-              movies={movies}
-              isInVault={isInVault}
-              onToggleVault={toggleVault}
-              onSelectMovie={handleSelectMovie}
-            />
+            <>
+              <DiscoveryGrid
+                movies={movies}
+                isInVault={isInVault}
+                onToggleVault={toggleVault}
+                onSelectMovie={handleSelectMovie}
+              />
+              {loadingMore && (
+                <div className="flex justify-center py-8">
+                  <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                </div>
+              )}
+              {page < totalPages && <div ref={sentinelRef} className="h-1" />}
+              {page >= totalPages && movies.length > 0 && (
+                <p className="text-center font-body text-xs text-muted-foreground py-8">You've reached the end</p>
+              )}
+            </>
           )}
         </section>
       </main>

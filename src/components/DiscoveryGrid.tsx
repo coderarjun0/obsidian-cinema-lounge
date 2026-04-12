@@ -1,5 +1,5 @@
 import MovieCard from "./MovieCard";
-import type { Movie } from "@/lib/mockData";
+import type { Movie } from "@/lib/tmdb";
 
 interface DiscoveryGridProps {
   movies: Movie[];

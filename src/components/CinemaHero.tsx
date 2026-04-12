@@ -1,5 +1,5 @@
 import { Play, Plus, Check, Star } from "lucide-react";
-import type { Movie } from "@/lib/mockData";
+import type { Movie } from "@/lib/tmdb";
 
 interface CinemaHeroProps {
   movie: Movie;
@@ -12,19 +12,13 @@ interface CinemaHeroProps {
 export default function CinemaHero({ movie, isInVault, onAddToVault, onRemoveFromVault, onViewDetails }: CinemaHeroProps) {
   return (
     <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden">
-      {/* Backdrop */}
       <div className="absolute inset-0">
-        <img
-          src={movie.backdrop_path}
-          alt={movie.title}
-          className="h-full w-full object-cover object-center"
-        />
+        <img src={movie.backdropUrl} alt={movie.title} className="h-full w-full object-cover object-center" />
         <div className="cinema-gradient absolute inset-0" />
         <div className="cinema-gradient-top absolute inset-0" />
         <div className="absolute inset-0 bg-background/40" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 flex h-full items-end pb-20 px-6 md:px-16 lg:px-24">
         <div className="max-w-2xl animate-slide-up">
           <div className="mb-4 flex items-center gap-3">
@@ -33,7 +27,7 @@ export default function CinemaHero({ movie, isInVault, onAddToVault, onRemoveFro
             </span>
             <span className="flex items-center gap-1 text-primary">
               <Star className="h-4 w-4 fill-primary" />
-              <span className="font-body text-sm font-semibold">{movie.vote_average}</span>
+              <span className="font-body text-sm font-semibold">{movie.rating}</span>
             </span>
           </div>
 
@@ -42,14 +36,18 @@ export default function CinemaHero({ movie, isInVault, onAddToVault, onRemoveFro
           </h1>
 
           <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground font-body">
-            <span>{movie.release_date.split("-")[0]}</span>
-            <span className="h-1 w-1 rounded-full bg-muted-foreground" />
-            {movie.runtime && <span>{movie.runtime} min</span>}
+            <span>{movie.year}</span>
+            {movie.runtime && (
+              <>
+                <span className="h-1 w-1 rounded-full bg-muted-foreground" />
+                <span>{movie.runtime} min</span>
+              </>
+            )}
             <span className="h-1 w-1 rounded-full bg-muted-foreground" />
             <span>{movie.genres.join(" · ")}</span>
           </div>
 
-          <p className="mt-5 max-w-lg text-sm leading-relaxed text-secondary-foreground/80 font-body">
+          <p className="mt-5 max-w-lg text-sm leading-relaxed text-secondary-foreground/80 font-body line-clamp-3">
             {movie.overview}
           </p>
 
@@ -67,15 +65,9 @@ export default function CinemaHero({ movie, isInVault, onAddToVault, onRemoveFro
               className="glass-panel flex items-center gap-2.5 rounded-full px-6 py-3.5 font-heading text-sm font-semibold uppercase tracking-wider text-foreground transition-all hover:border-primary/50 hover:text-primary active:scale-95"
             >
               {isInVault ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  In Vault
-                </>
+                <><Check className="h-4 w-4" /> In Vault</>
               ) : (
-                <>
-                  <Plus className="h-4 w-4" />
-                  Add to Vault
-                </>
+                <><Plus className="h-4 w-4" /> Add to Vault</>
               )}
             </button>
           </div>

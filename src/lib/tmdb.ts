@@ -83,6 +83,13 @@ export async function getTrending(): Promise<Movie[]> {
   return data.results.slice(0, 18).map(mapBasicMovie);
 }
 
+export async function discoverByGenre(genreId: number): Promise<Movie[]> {
+  const data = await tmdbFetch<{ results: TmdbMovie[] }>(
+    `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&language=en-US&page=1`
+  );
+  return data.results.slice(0, 18).map(mapBasicMovie);
+}
+
 export async function searchMovies(query: string): Promise<Movie[]> {
   if (!query.trim()) return [];
   const data = await tmdbFetch<{ results: TmdbMovie[] }>(

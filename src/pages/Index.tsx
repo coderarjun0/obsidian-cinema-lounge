@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import CinemaHero from "@/components/CinemaHero";
 import DiscoveryGrid from "@/components/DiscoveryGrid";
 import VaultSection from "@/components/VaultSection";
 import MovieDetail from "@/components/MovieDetail";
-import { getTrending, searchMovies, getMovieDetail } from "@/lib/tmdb";
+import GenreFilter from "@/components/GenreFilter";
+import { getTrending, searchMovies, getMovieDetail, discoverByGenre } from "@/lib/tmdb";
 import type { Movie } from "@/lib/tmdb";
 import { useVault } from "@/hooks/useVault";
 
@@ -13,6 +14,7 @@ export default function Index() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeGenre, setActiveGenre] = useState(0);
   const { vault, addToVault, removeFromVault, isInVault } = useVault();
 
   // Load trending on mount
@@ -23,10 +25,15 @@ export default function Index() {
     }).catch(() => setLoading(false));
   }, []);
 
-  // Debounced search
+  // Search effect
   useEffect(() => {
     if (!searchQuery.trim()) {
-      getTrending().then(setMovies);
+      // When search clears, reload based on active genre
+      if (activeGenre === 0) {
+        getTrending().then(setMovies);
+      } else {
+        discoverByGenre(activeGenre).then(setMovies);
+      }
       return;
     }
     const timer = setTimeout(() => {
@@ -37,10 +44,21 @@ export default function Index() {
       });
     }, 400);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, activeGenre]);
+
+  // Genre filter effect
+  const handleGenreChange = useCallback((genreId: number) => {
+    setActiveGenre(genreId);
+    setSearchQuery("");
+    setLoading(true);
+    const fetcher = genreId === 0 ? getTrending() : discoverByGenre(genreId);
+    fetcher.then((data) => {
+      setMovies(data);
+      setLoading(false);
+    });
+  }, []);
 
   const handleSelectMovie = useCallback(async (movie: Movie) => {
-    // Fetch full details (cast, trailer, etc.)
     try {
       const detail = await getMovieDetail(movie.id);
       setSelectedMovie(detail);
@@ -73,7 +91,7 @@ export default function Index() {
         <VaultSection movies={vault} onRemove={removeFromVault} onSelect={handleSelectMovie} />
 
         <section className={vault.length > 0 ? "mt-16" : ""}>
-          <div className="flex items-end justify-between mb-6">
+          <div className="flex items-end justify-between mb-4">
             <div>
               <h2 className="font-heading text-2xl font-bold">
                 {searchQuery ? "Search Results" : "The Stage"}
@@ -83,6 +101,8 @@ export default function Index() {
               </p>
             </div>
           </div>
+
+          {!searchQuery && <GenreFilter activeId={activeGenre} onChange={handleGenreChange} />}
 
           {loading ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">

@@ -1,16 +1,116 @@
-const TMDB_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMjcyMzYyZDQyNDVmMzYwMDZhNTI5ZjhkNDU2YmVmNSIsIm5iZiI6MTc3NDEwODkxNS4yODcwMDAyLCJzdWIiOiI2OWJlYzBmMzY1YmJiYmQ5OWUyYjdkNjgiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.9MIpRQA2FB9nLk7lnlGYvq_VIYLS7wY4KRhdtFkf3us";
-const BASE = "https://api.themoviedb.org/3";
-const IMG = "https://image.tmdb.org/t/p";
+// ── TV / Series ──────────────────────────────────────────────────────
 
-const headers = {
-  Authorization: `Bearer ${TMDB_TOKEN}`,
-  "Content-Type": "application/json",
+export interface TmdbSeries {
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  vote_average: number;
+  first_air_date: string;
+  genre_ids?: number[];
+}
+
+export interface TmdbSeriesDetail extends TmdbSeries {
+  genres: { id: number; name: string }[];
+  episode_run_time: number[];
+  number_of_seasons: number;
+  number_of_episodes: number;
+  videos?: { results: { key: string; site: string; type: string }[] };
+  credits?: {
+    cast: { id: number; name: string; character: string; profile_path: string | null }[];
+  };
+}
+
+export interface Series {
+  id: number;
+  title: string;
+  overview: string;
+  posterUrl: string;
+  backdropUrl: string;
+  rating: number;
+  year: string;
+  genres: string[];
+  runtime?: number;
+  trailerKey?: string;
+  numberOfSeasons?: number;
+  numberOfEpisodes?: number;
+  cast?: { name: string; character: string; imageUrl: string }[];
+}
+
+const TV_GENRE_MAP: Record<number, string> = {
+  10759: "Action & Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+  99: "Documentary", 18: "Drama", 10751: "Family", 10762: "Kids",
+  9648: "Mystery", 10763: "News", 10764: "Reality", 10765: "Sci-Fi & Fantasy",
+  10766: "Soap", 10767: "Talk", 10768: "War & Politics", 37: "Western",
 };
 
-async function tmdbFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { headers });
-  if (!res.ok) throw new Error(`TMDB error ${res.status}`);
-  return res.json();
+function mapBasicSeries(s: TmdbSeries): Series {
+  return {
+    id: s.id,
+    title: s.name,
+    overview: s.overview,
+    posterUrl: posterUrl(s.poster_path),
+    backdropUrl: backdropUrl(s.backdrop_path),
+    rating: Math.round(s.vote_average * 10) / 10,
+    year: s.first_air_date?.split("-")[0] ?? "",
+    genres: (s.genre_ids ?? []).map((id) => TV_GENRE_MAP[id] ?? "").filter(Boolean),
+  };
+}
+
+export interface PaginatedSeriesResult {
+  series: Series[];
+  totalPages: number;
+}
+
+export async function getTrendingSeries(page = 1): Promise<PaginatedSeriesResult> {
+  const data = await tmdbFetch<{ results: TmdbSeries[]; total_pages: number }>(
+    `/trending/tv/week?language=en-US&page=${page}`
+  );
+  return { series: data.results.map(mapBasicSeries), totalPages: Math.min(data.total_pages, 20) };
+}
+
+export async function discoverSeriesByGenre(genreId: number, page = 1): Promise<PaginatedSeriesResult> {
+  const data = await tmdbFetch<{ results: TmdbSeries[]; total_pages: number }>(
+    `/discover/tv?with_genres=${genreId}&sort_by=popularity.desc&language=en-US&page=${page}`
+  );
+  return { series: data.results.map(mapBasicSeries), totalPages: Math.min(data.total_pages, 20) };
+}
+
+export async function searchSeries(query: string, page = 1): Promise<PaginatedSeriesResult> {
+  if (!query.trim()) return { series: [], totalPages: 0 };
+  const data = await tmdbFetch<{ results: TmdbSeries[]; total_pages: number }>(
+    `/search/tv?query=${encodeURIComponent(query)}&language=en-US&page=${page}`
+  );
+  return { series: data.results.map(mapBasicSeries), totalPages: Math.min(data.total_pages, 20) };
+}
+
+export async function getSeriesDetail(id: number): Promise<Series> {
+  const s = await tmdbFetch<TmdbSeriesDetail>(
+    `/tv/${id}?language=en-US&append_to_response=videos,credits`
+  );
+  const trailer = s.videos?.results.find(
+    (v) => v.site === "YouTube" && v.type === "Trailer"
+  );
+  return {
+    id: s.id,
+    title: s.name,
+    overview: s.overview,
+    posterUrl: posterUrl(s.poster_path),
+    backdropUrl: backdropUrl(s.backdrop_path),
+    rating: Math.round(s.vote_average * 10) / 10,
+    year: s.first_air_date?.split("-")[0] ?? "",
+    genres: s.genres.map((g) => g.name),
+    runtime: s.episode_run_time?.[0],
+    trailerKey: trailer?.key,
+    numberOfSeasons: s.number_of_seasons,
+    numberOfEpisodes: s.number_of_episodes,
+    cast: s.credits?.cast.slice(0, 8).map((c) => ({
+      name: c.name,
+      character: c.character,
+      imageUrl: profileUrl(c.profile_path),
+    })),
+  };
 }
 
 export interface TmdbMovie {

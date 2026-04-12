@@ -88,6 +88,16 @@ export async function getTrending(page = 1): Promise<PaginatedResult> {
   return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
 }
 
+export async function getTopRated(page = 1): Promise<PaginatedResult> {
+  const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(`/movie/top_rated?language=en-US&page=${page}`);
+  return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
+}
+
+export async function getUpcoming(page = 1): Promise<PaginatedResult> {
+  const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(`/movie/upcoming?language=en-US&page=${page}`);
+  return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
+}
+
 export async function discoverByGenre(genreId: number, page = 1): Promise<PaginatedResult> {
   const data = await tmdbFetch<{ results: TmdbMovie[]; total_pages: number }>(
     `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&language=en-US&page=${page}`

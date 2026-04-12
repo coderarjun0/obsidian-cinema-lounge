@@ -6,52 +6,55 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
-    --foreground: 40 10% 92%;
+    /* Premium Dark Theme - #131313 base */
+    --background: 0 0% 7.5%;
+    --foreground: 45 10% 95%;
 
-    --card: 240 8% 8%;
-    --card-foreground: 40 10% 92%;
+    --card: 0 0% 10%;
+    --card-foreground: 45 10% 95%;
 
-    --popover: 240 8% 8%;
-    --popover-foreground: 40 10% 92%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 45 10% 95%;
 
-    --primary: 40 65% 55%;
-    --primary-foreground: 240 10% 4%;
+    /* Neon Gold Primary */
+    --primary: 45 100% 50%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 240 6% 14%;
-    --secondary-foreground: 40 10% 85%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 45 10% 90%;
 
-    --muted: 240 6% 12%;
-    --muted-foreground: 240 6% 55%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 40 65% 55%;
-    --accent-foreground: 240 10% 4%;
+    /* Neon Gold Accent */
+    --accent: 45 100% 50%;
+    --accent-foreground: 0 0% 5%;
 
     --destructive: 0 72% 51%;
-    --destructive-foreground: 40 10% 92%;
+    --destructive-foreground: 45 10% 95%;
 
-    --border: 240 6% 18%;
-    --input: 240 6% 18%;
-    --ring: 40 65% 55%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 45 100% 50%;
 
     --radius: 0.75rem;
 
-    /* Custom tokens */
-    --glass-bg: 240 8% 10%;
-    --glass-border: 240 6% 22%;
-    --gold: 40 65% 55%;
-    --gold-glow: 40 80% 65%;
-    --obsidian: 240 10% 6%;
-    --obsidian-light: 240 8% 12%;
+    /* Custom tokens - Premium Glassmorphism */
+    --glass-bg: 0 0% 12%;
+    --glass-border: 45 30% 25%;
+    --gold: 45 100% 50%;
+    --gold-glow: 45 100% 60%;
+    --obsidian: 0 0% 7.5%;
+    --obsidian-light: 0 0% 12%;
 
-    --sidebar-background: 240 10% 4%;
-    --sidebar-foreground: 40 10% 92%;
-    --sidebar-primary: 40 65% 55%;
-    --sidebar-primary-foreground: 240 10% 4%;
-    --sidebar-accent: 240 6% 14%;
-    --sidebar-accent-foreground: 40 10% 92%;
-    --sidebar-border: 240 6% 18%;
-    --sidebar-ring: 40 65% 55%;
+    --sidebar-background: 0 0% 7.5%;
+    --sidebar-foreground: 45 10% 95%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 14%;
+    --sidebar-accent-foreground: 45 10% 95%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 45 100% 50%;
   }
 }
 
@@ -69,25 +72,38 @@
 
 @layer components {
   .glass-panel {
-    @apply bg-glass/60 backdrop-blur-[24px] border border-glass-border/40 rounded-xl;
+    @apply bg-glass/50 backdrop-blur-[24px] border border-glass-border/30 rounded-xl;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 215, 0, 0.05);
   }
   .glass-card {
-    @apply bg-glass/40 backdrop-blur-[24px] border border-glass-border/30 rounded-xl transition-all duration-500;
+    @apply bg-glass/30 backdrop-blur-[20px] border border-glass-border/20 rounded-xl transition-all duration-500;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 215, 0, 0.03);
   }
   .glass-card:hover {
-    @apply bg-glass/60 border-glass-border/60 shadow-[0_8px_40px_-12px_hsl(var(--gold)/0.15)];
+    @apply bg-glass/50 border-glass-border/40;
+    box-shadow: 0 12px 48px rgba(255, 215, 0, 0.15), inset 0 1px 0 rgba(255, 215, 0, 0.1);
   }
   .gold-text {
     @apply text-primary;
   }
   .gold-glow {
-    text-shadow: 0 0 30px hsl(var(--gold) / 0.4);
+    text-shadow: 0 0 40px hsl(var(--gold) / 0.5), 0 0 80px hsl(var(--gold) / 0.3);
+  }
+  .neon-gold-glow {
+    box-shadow: 0 0 20px hsl(var(--gold) / 0.4), 0 0 40px hsl(var(--gold) / 0.2);
   }
   .cinema-gradient {
     background: linear-gradient(180deg, transparent 0%, hsl(var(--background)) 100%);
   }
   .cinema-gradient-top {
     background: linear-gradient(180deg, hsl(var(--background)) 0%, transparent 40%);
+  }
+  .movie-row-title {
+    @apply font-heading text-2xl font-bold tracking-tight;
+    background: linear-gradient(90deg, hsl(var(--foreground)) 0%, hsl(var(--gold)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 

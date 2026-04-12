@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import type { Movie } from "@/lib/mockData";
+import type { Movie } from "@/lib/tmdb";
 
 const VAULT_KEY = "cinesync-vault";
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Film, User, LogOut } from "lucide-react";
+import { Film, User, LogOut, UserCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/useAuth";

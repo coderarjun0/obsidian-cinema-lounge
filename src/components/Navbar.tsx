@@ -21,7 +21,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 glass-panel rounded-none border-x-0 border-t-0 px-6 py-3 md:px-16 lg:px-24">
+      <nav className="fixed top-0 left-0 right-0 z-40 glass-panel rounded-none border-x-0 border-t-0 px-6 py-5 md:px-16 lg:px-24 md:py-3">
         <div className="flex items-center justify-between gap-6">
           <div className="flex items-center gap-4 shrink-0">
             <div className="flex items-center gap-2.5">
@@ -34,20 +34,17 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
             {/* Mode Toggle */}
             <button
               onClick={() => setMode(activeMode === "movies" ? "series" : "movies")}
-              className="relative flex items-center rounded-full p-1 shrink-0 cursor-pointer"
+              className="relative flex items-center rounded-full p-1 shrink-0 cursor-pointer w-[120px] h-[48px] md:h-[32px]"
               style={{
                 background: "hsl(var(--secondary))",
                 border: "1px solid hsl(var(--border))",
-                width: 120,
-                height: 32,
               }}
             >
               <motion.div
-                className="absolute top-1 bottom-1 rounded-full z-0"
+                className="absolute top-1 bottom-1 rounded-full z-0 w-[56px]"
                 animate={{ left: activeMode === "movies" ? 4 : 60 }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 style={{
-                  width: 56,
                   background: activeMode === "movies"
                     ? "linear-gradient(135deg, #FFD700cc, #00E5FF44)"
                     : "linear-gradient(135deg, #A855F7, #7C3AED)",
@@ -75,7 +72,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
               <div className="relative">
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="glass-panel flex items-center gap-2 rounded-full px-3 py-1.5 transition-all hover:border-primary/50"
+                  className="glass-panel flex items-center gap-2 rounded-full px-3 py-1.5 min-h-[48px] md:min-h-0 transition-all hover:border-primary/50"
                 >
                   <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center">
                     <User className="h-3 w-3 text-primary" />
@@ -106,7 +103,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
             ) : (
               <button
                 onClick={() => setShowAuth(true)}
-                className="glass-panel flex items-center gap-2 rounded-full px-3 py-1.5 transition-all hover:border-primary/50 hover:text-primary"
+                className="glass-panel flex items-center gap-2 rounded-full px-3 py-1.5 min-h-[48px] md:min-h-0 transition-all hover:border-primary/50 hover:text-primary"
               >
                 <User className="h-3.5 w-3.5" />
                 <span className="font-body text-xs font-semibold">Sign In</span>

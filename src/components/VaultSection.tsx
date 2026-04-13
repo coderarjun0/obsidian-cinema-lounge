@@ -22,9 +22,9 @@ export default function VaultSection({ movies, onRemove, onSelect }: VaultSectio
         </div>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none px-4 -mx-4 md:px-0 md:mx-0 snap-x snap-mandatory">
         {movies.map((movie) => (
-          <div key={movie.id} className="group relative shrink-0 w-32 cursor-pointer" onClick={() => onSelect(movie)}>
+          <div key={movie.id} className="group relative shrink-0 w-32 cursor-pointer snap-start" onClick={() => onSelect(movie)}>
             <div className="glass-card overflow-hidden aspect-[2/3] rounded-lg">
               <img src={movie.posterUrl} alt={movie.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

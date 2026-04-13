@@ -69,10 +69,10 @@
 
 @layer components {
   .glass-panel {
-    @apply bg-glass/60 backdrop-blur-[24px] border border-glass-border/40 rounded-xl;
+    @apply bg-glass/60 backdrop-blur-[12px] md:backdrop-blur-[24px] border border-glass-border/40 rounded-xl;
   }
   .glass-card {
-    @apply bg-glass/40 backdrop-blur-[24px] border border-glass-border/30 rounded-xl transition-all duration-500;
+    @apply bg-glass/40 backdrop-blur-[12px] md:backdrop-blur-[24px] border border-glass-border/30 rounded-xl transition-all duration-500;
   }
   .glass-card:hover {
     @apply bg-glass/60 border-glass-border/60 shadow-[0_8px_40px_-12px_hsl(var(--gold)/0.15)];

@@ -29,7 +29,7 @@ export default function Landing() {
         </div>
 
         {/* Headline */}
-        <h1 className="relative font-heading text-5xl md:text-7xl font-bold leading-tight max-w-3xl mb-6 tracking-tighter">
+        <h1 className="relative font-heading text-4xl md:text-7xl font-bold leading-tight max-w-3xl mb-6 tracking-tight md:tracking-tighter">
           Your personal{" "}
           <span className="text-primary">cinematic</span>{" "}
           universe
@@ -42,7 +42,7 @@ export default function Landing() {
         {/* CTA */}
         <button
           onClick={() => navigate("/browse")}
-          className="px-10 py-4 rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
+          className="px-10 py-4 w-[80%] sm:w-auto min-h-[48px] rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
           style={{
             backgroundColor: "#000",
             color: "#FFF",
@@ -55,7 +55,7 @@ export default function Landing() {
 
       {/* Features */}
       <div className="px-6 py-24 md:px-16 lg:px-24">
-        <h2 className="font-heading text-3xl font-bold text-center mb-16 tracking-tighter">
+        <h2 className="font-heading text-3xl font-bold text-center mb-16 tracking-tight md:tracking-tighter">
           Everything a cinephile needs
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -78,7 +78,7 @@ export default function Landing() {
           ].map(({ icon, title, desc }) => (
             <div
               key={title}
-              className="flex flex-col items-center text-center p-8 rounded-2xl border border-border bg-background/60 backdrop-blur-[20px] gap-4"
+              className="flex flex-col items-center text-center p-8 rounded-2xl border border-border bg-background/60 backdrop-blur-[12px] md:backdrop-blur-[20px] gap-4"
             >
               <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
                 {icon}
@@ -92,7 +92,7 @@ export default function Landing() {
 
       {/* Final CTA */}
       <div className="px-6 py-24 text-center">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tighter">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight md:tracking-tighter">
           Ready to watch something great?
         </h2>
         <p className="font-body text-muted-foreground mb-8">
@@ -100,7 +100,7 @@ export default function Landing() {
         </p>
         <button
           onClick={() => navigate("/browse")}
-          className="px-10 py-4 rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
+          className="px-10 py-4 w-[80%] sm:w-auto min-h-[48px] rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
           style={{
             backgroundColor: "#000",
             color: "#FFF",

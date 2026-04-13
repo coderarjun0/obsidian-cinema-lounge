@@ -55,7 +55,7 @@ export default function CinemaHero({ media, isInVault, onAddToVault, onRemoveFro
           </div>
 
           <h1
-            className="font-heading text-5xl font-black italic leading-[0.95] tracking-tight md:text-7xl lg:text-8xl"
+            className="font-heading text-4xl md:text-7xl lg:text-8xl font-black italic leading-[0.95] tracking-tight md:tracking-tighter"
             style={{ color: accentColor, textShadow: `0 0 40px ${accentColor}55` }}
           >
             {media.title}
@@ -83,10 +83,10 @@ export default function CinemaHero({ media, isInVault, onAddToVault, onRemoveFro
             {media.overview}
           </p>
 
-          <div className="mt-8 flex items-center gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row items-center sm:items-start gap-4">
             <button
               onClick={onViewDetails}
-              className="flex items-center gap-2.5 rounded-full px-7 py-3.5 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+              className="flex items-center justify-center gap-2.5 rounded-full w-[80%] sm:w-auto min-h-[48px] px-7 py-3.5 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
               style={{
                 background: accentColor,
                 color: "#000",
@@ -98,7 +98,7 @@ export default function CinemaHero({ media, isInVault, onAddToVault, onRemoveFro
             </button>
             <button
               onClick={isInVault ? onRemoveFromVault : onAddToVault}
-              className="glass-panel flex items-center gap-2.5 rounded-full px-6 py-3.5 font-heading text-sm font-semibold uppercase tracking-wider text-foreground transition-all active:scale-95"
+              className="glass-panel flex items-center justify-center gap-2.5 rounded-full w-[80%] sm:w-auto min-h-[48px] px-6 py-3.5 font-heading text-sm font-semibold uppercase tracking-wider text-foreground transition-all active:scale-95"
             >
               {isInVault ? (
                 <><Check className="h-4 w-4" /> In Vault</>

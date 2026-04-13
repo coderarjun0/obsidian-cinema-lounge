@@ -19,12 +19,12 @@ interface GenreFilterProps {
 
 export default function GenreFilter({ activeId, onChange }: GenreFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1">
+    <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none px-4 -mx-4 md:px-1 md:-mx-1 snap-x snap-mandatory">
       {GENRE_FILTERS.map((g) => (
         <button
           key={g.id}
           onClick={() => onChange(g.id)}
-          className={`shrink-0 rounded-full px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-wider transition-all active:scale-95 ${
+          className={`shrink-0 rounded-full px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-wider transition-all active:scale-95 snap-start ${
             activeId === g.id
               ? "bg-primary text-primary-foreground shadow-[0_0_16px_hsl(var(--gold)/0.3)]"
               : "glass-panel text-muted-foreground hover:text-foreground hover:border-primary/40"

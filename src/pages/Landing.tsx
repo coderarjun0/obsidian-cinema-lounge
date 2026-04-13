@@ -5,12 +5,18 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div 
+      className="min-h-screen text-foreground flex flex-col relative"
+      style={{ background: "radial-gradient(circle at center, #0D0D0D 0%, #020210 100%)" }}
+    >
+      {/* Glow Header */}
+      <div 
+        className="w-full h-[1px] absolute top-0 left-0"
+        style={{ background: "linear-gradient(to right, cyan, purple)" }}
+      />
       {/* Hero */}
       <div className="relative flex flex-col items-center justify-center flex-1 min-h-screen overflow-hidden px-6 text-center">
-        {/* Background glow */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-background to-background pointer-events-none" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+        {/* Background glow placeholder removed to favor global radial gradient */}
 
         {/* Logo */}
         <div className="relative flex items-center gap-3 mb-8">
@@ -23,7 +29,7 @@ export default function Landing() {
         </div>
 
         {/* Headline */}
-        <h1 className="relative font-heading text-5xl md:text-7xl font-bold leading-tight max-w-3xl mb-6">
+        <h1 className="relative font-heading text-5xl md:text-7xl font-bold leading-tight max-w-3xl mb-6 tracking-tighter">
           Your personal{" "}
           <span className="text-primary">cinematic</span>{" "}
           universe
@@ -36,15 +42,20 @@ export default function Landing() {
         {/* CTA */}
         <button
           onClick={() => navigate("/browse")}
-          className="px-10 py-4 rounded-xl bg-primary text-primary-foreground font-heading font-bold text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-100 border border-primary/30"
+          className="px-10 py-4 rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
+          style={{
+            backgroundColor: "#000",
+            color: "#FFF",
+            boxShadow: "0 0 30px #FF4D00",
+          }}
         >
           Enter the Lounge →
         </button>
       </div>
 
       {/* Features */}
-      <div className="px-6 py-24 md:px-16 lg:px-24 bg-muted/20">
-        <h2 className="font-heading text-3xl font-bold text-center mb-16">
+      <div className="px-6 py-24 md:px-16 lg:px-24">
+        <h2 className="font-heading text-3xl font-bold text-center mb-16 tracking-tighter">
           Everything a cinephile needs
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -67,7 +78,7 @@ export default function Landing() {
           ].map(({ icon, title, desc }) => (
             <div
               key={title}
-              className="flex flex-col items-center text-center p-8 rounded-2xl border border-border bg-background/60 backdrop-blur gap-4"
+              className="flex flex-col items-center text-center p-8 rounded-2xl border border-border bg-background/60 backdrop-blur-[20px] gap-4"
             >
               <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
                 {icon}
@@ -81,7 +92,7 @@ export default function Landing() {
 
       {/* Final CTA */}
       <div className="px-6 py-24 text-center">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tighter">
           Ready to watch something great?
         </h2>
         <p className="font-body text-muted-foreground mb-8">
@@ -89,7 +100,12 @@ export default function Landing() {
         </p>
         <button
           onClick={() => navigate("/browse")}
-          className="px-10 py-4 rounded-xl bg-primary text-primary-foreground font-heading font-bold text-lg hover:bg-primary/90 transition-all shadow-2xl shadow-primary/40 hover:shadow-primary/60 hover:scale-105 active:scale-100 border border-primary/30"
+          className="px-10 py-4 rounded-xl font-heading font-bold text-lg transition-all animate-pulse hover:scale-105 active:scale-100 border border-[#FF4D00]/50"
+          style={{
+            backgroundColor: "#000",
+            color: "#FFF",
+            boxShadow: "0 0 30px #FF4D00",
+          }}
         >
           Start Exploring →
         </button>

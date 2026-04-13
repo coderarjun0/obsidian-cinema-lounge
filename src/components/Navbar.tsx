@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Film, User, LogOut } from "lucide-react";
+import { Film, User, LogOut, UserCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +17,7 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { activeMode, setMode } = useModeStore();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -84,6 +86,13 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
                 </button>
                 {showMenu && (
                   <div className="absolute top-full left-0 mt-2 glass-panel rounded-lg p-1 min-w-[140px] animate-fade-in">
+                    <button
+                      onClick={() => { navigate("/profile"); setShowMenu(false); }}
+                      className="flex items-center gap-2 w-full rounded-md px-3 py-2 font-body text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                    >
+                      <UserCircle className="h-3.5 w-3.5" />
+                      Profile
+                    </button>
                     <button
                       onClick={() => { signOut(); setShowMenu(false); }}
                       className="flex items-center gap-2 w-full rounded-md px-3 py-2 font-body text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"

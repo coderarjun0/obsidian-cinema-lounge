@@ -1,5 +1,6 @@
 import { X, Star, Play, Plus, Check, Clock, Calendar } from "lucide-react";
 import type { Movie } from "@/lib/tmdb";
+import ReviewSection from "./ReviewSection";
 
 interface MovieDetailProps {
   movie: Movie;
@@ -89,8 +90,10 @@ export default function MovieDetail({ movie, isInVault, onAddToVault, onRemoveFr
                 ))}
               </div>
             </div>
-          )}
-        </div>
+            )}
+
+            <ReviewSection mediaId={movie.id} mediaType="movie" />
+          </div>
       </div>
     </div>
   );

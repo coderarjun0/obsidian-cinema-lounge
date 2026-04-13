@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { X, Play, Plus, Check, Star, Tv } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Series } from "@/lib/tmdb";
+import ReviewSection from "./ReviewSection";
 
 interface SeriesDetailProps {
   series: Series;
@@ -136,6 +137,8 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
                 </div>
               </div>
             )}
+
+            <ReviewSection mediaId={series.id} mediaType="series" accentColor="#A855F7" />
           </div>
         </motion.div>
       </motion.div>

@@ -133,7 +133,7 @@ export default function Index() {
         )}
       </AnimatePresence>
 
-      <main className="px-6 py-12 md:px-16 lg:px-24">
+      <main className="px-4 py-10 md:px-16 lg:px-24 md:py-12">
         <VaultSection movies={vault} onRemove={removeFromVault} onSelect={handleSelectMovie} />
 
         <section className={vault.length > 0 ? "mt-16" : ""}>

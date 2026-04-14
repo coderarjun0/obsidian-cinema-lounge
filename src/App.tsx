@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
 import Profile from "./pages/Profile.tsx";
+import Settings from "./pages/Settings.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Landing />} />        {/* ← homepage */}
             <Route path="/browse" element={<Index />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

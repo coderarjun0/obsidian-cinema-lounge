@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Film, User, LogOut, UserCircle } from "lucide-react";
+import { Film, User, LogOut, UserCircle, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
@@ -90,6 +90,14 @@ export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
                       <UserCircle className="h-3.5 w-3.5" />
                       Profile
                     </button>
+                    <button
+                      onClick={() => { navigate("/settings"); setShowMenu(false); }}
+                      className="flex items-center gap-2 w-full rounded-md px-3 py-2 font-body text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                    >
+                      <Settings className="h-3.5 w-3.5" />
+                      Settings
+                    </button>
+                    <div className="h-px bg-border/50 my-1" />
                     <button
                       onClick={() => { signOut(); setShowMenu(false); }}
                       className="flex items-center gap-2 w-full rounded-md px-3 py-2 font-body text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"

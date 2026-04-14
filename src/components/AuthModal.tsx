@@ -26,9 +26,12 @@ export default function AuthModal({ onClose }: AuthModalProps) {
     if (result.error) {
       setError(result.error.message);
     } else if (mode === "signup") {
-      setSuccess("Check your email to confirm your account!");
+      // Instead of setSuccess, we send them to the browse page
+      window.location.href = "/browse";
     } else {
       onClose();
+      // If the login was successful, we should also ensure they are at /browse
+      window.location.href = "/browse";
     }
     setLoading(false);
   };

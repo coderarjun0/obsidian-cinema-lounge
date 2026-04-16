@@ -315,7 +315,7 @@ export async function searchSeries(query: string, page = 1): Promise<PaginatedSe
 
 export async function getSeriesDetail(id: number): Promise<Series> {
   const s = await tmdbFetch<TmdbSeriesDetail>(
-    `/tv/${id}?language=en-US&append_to_response=videos,credits`
+    `/tv/${id}?language=en-US&append_to_response=videos,credits,watch/providers`
   );
   const trailer = s.videos?.results.find(
     (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -333,6 +333,16 @@ export async function getSeriesDetail(id: number): Promise<Series> {
     trailerKey: trailer?.key,
     numberOfSeasons: s.number_of_seasons,
     numberOfEpisodes: s.number_of_episodes,
+    tagline: s.tagline || undefined,
+    status: s.status || undefined,
+    voteCount: s.vote_count || undefined,
+    productionCompanies: s.production_companies?.map((c) => c.name).filter(Boolean),
+    spokenLanguages: s.spoken_languages?.map((l) => l.english_name).filter(Boolean),
+    networks: s.networks?.slice(0, 3).map((n) => ({
+      name: n.name,
+      logoUrl: n.logo_path ? `${IMG}/w92${n.logo_path}` : "",
+    })),
+    watchProviders: mapProviders(s["watch/providers"]),
     cast: s.credits?.cast.slice(0, 8).map((c) => ({
       name: c.name,
       character: c.character,

@@ -40,9 +40,23 @@ export interface TmdbMovie {
 export interface TmdbMovieDetail extends TmdbMovie {
   genres: { id: number; name: string }[];
   runtime: number;
+  tagline?: string;
+  budget?: number;
+  revenue?: number;
+  production_companies?: { name: string }[];
+  spoken_languages?: { english_name: string }[];
+  status?: string;
+  vote_count?: number;
   videos?: { results: { key: string; site: string; type: string }[] };
   credits?: {
     cast: { id: number; name: string; character: string; profile_path: string | null }[];
+  };
+  ["watch/providers"]?: {
+    results: Record<string, {
+      flatrate?: { provider_id: number; provider_name: string; logo_path: string }[];
+      rent?: { provider_id: number; provider_name: string; logo_path: string }[];
+      buy?: { provider_id: number; provider_name: string; logo_path: string }[];
+    }>;
   };
 }
 

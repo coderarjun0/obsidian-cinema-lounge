@@ -46,6 +46,13 @@ export interface TmdbMovieDetail extends TmdbMovie {
   };
 }
 
+export interface WatchProvider {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string;
+  logoUrl: string;
+}
+
 export interface Movie {
   id: number;
   title: string;
@@ -58,6 +65,14 @@ export interface Movie {
   runtime?: number;
   trailerKey?: string;
   cast?: { name: string; character: string; imageUrl: string }[];
+  watchProviders?: WatchProvider[];
+  tagline?: string;
+  budget?: number;
+  revenue?: number;
+  productionCompanies?: string[];
+  spokenLanguages?: string[];
+  status?: string;
+  voteCount?: number;
 }
 
 const GENRE_MAP: Record<number, string> = {

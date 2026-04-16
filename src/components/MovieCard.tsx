@@ -1,5 +1,8 @@
-import { Star, Plus, Check } from "lucide-react";
-import type { Movie } from "@/lib/tmdb";
+import { useState, useEffect } from "react";
+import { Star, Plus, Check, Tv } from "lucide-react";
+import type { Movie, WatchProvider } from "@/lib/tmdb";
+import { getWatchProviders } from "@/lib/tmdb";
+import { useModeStore } from "@/store/useModeStore";
 
 interface MovieCardProps {
   movie: Movie;
@@ -10,11 +13,24 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ movie, isInVault, onToggleVault, onClick, index }: MovieCardProps) {
+  const [hovered, setHovered] = useState(false);
+  const [providers, setProviders] = useState<WatchProvider[]>([]);
+  const { activeMode } = useModeStore();
+  const mediaType = activeMode === "series" ? "tv" : "movie";
+
+  useEffect(() => {
+    if (hovered && providers.length === 0) {
+      getWatchProviders(movie.id, mediaType).then(setProviders);
+    }
+  }, [hovered, movie.id, mediaType, providers.length]);
+
   return (
     <div
       className="group relative cursor-pointer animate-fade-in"
       style={{ animationDelay: `${index * 80}ms` }}
       onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <div className="glass-card overflow-hidden aspect-[2/3]">
         <img
@@ -29,9 +45,28 @@ export default function MovieCard({ movie, isInVault, onToggleVault, onClick, in
             <div className="flex items-center gap-1.5 mb-2">
               <Star className="h-3.5 w-3.5 fill-primary text-primary" />
               <span className="font-body text-xs font-bold text-primary">{movie.rating}</span>
+              <span className="font-body text-[10px] text-muted-foreground ml-1">{movie.year}</span>
             </div>
             <h3 className="font-heading text-base font-bold leading-tight">{movie.title}</h3>
             <p className="mt-1 font-body text-xs text-muted-foreground">{movie.genres.join(" · ")}</p>
+
+            {/* Streaming Providers */}
+            {providers.length > 0 && (
+              <div className="mt-2 flex items-center gap-1.5">
+                <Tv className="h-3 w-3 text-muted-foreground shrink-0" />
+                <div className="flex items-center gap-1">
+                  {providers.map((p) => (
+                    <img
+                      key={p.provider_id}
+                      src={p.logoUrl}
+                      alt={p.provider_name}
+                      title={p.provider_name}
+                      className="h-5 w-5 rounded-sm object-cover"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

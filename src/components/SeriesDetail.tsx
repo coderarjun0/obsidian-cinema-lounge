@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X, Play, Plus, Check, Star, Tv } from "lucide-react";
+import { X, Play, Plus, Check, Star, Tv, Globe, Film, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Series } from "@/lib/tmdb";
 import ReviewSection from "./ReviewSection";
@@ -64,10 +64,14 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
                 <h2 className="font-heading text-2xl font-black italic" style={{ color: "#A855F7", textShadow: "0 0 20px #A855F755" }}>
                   {series.title}
                 </h2>
+                {series.tagline && (
+                  <p className="font-body text-xs italic text-muted-foreground mt-0.5">"{series.tagline}"</p>
+                )}
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-xs font-body text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Star className="h-3 w-3 fill-purple-400 text-purple-400" />
                     {series.rating}
+                    {series.voteCount && <span className="text-[10px] ml-0.5">({series.voteCount.toLocaleString()})</span>}
                   </span>
                   <span>·</span>
                   <span>{series.year}</span>
@@ -86,6 +90,12 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
                       <span>{series.numberOfEpisodes} Episodes</span>
                     </>
                   )}
+                  {series.status && series.status !== "Ended" && series.status !== "Returning Series" && (
+                    <span className="glass-panel rounded-full px-2 py-0.5 text-[10px] font-medium text-purple-400">{series.status}</span>
+                  )}
+                  {series.status === "Returning Series" && (
+                    <span className="glass-panel rounded-full px-2 py-0.5 text-[10px] font-medium text-green-400">Ongoing</span>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {series.genres.map((g) => (
@@ -97,20 +107,72 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
               </div>
             </div>
 
+            {/* Watch Providers */}
+            {series.watchProviders && series.watchProviders.length > 0 && (
+              <div className="mb-5">
+                <h3 className="font-heading text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <Tv className="h-3.5 w-3.5" /> Available On
+                </h3>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {series.watchProviders.map((p) => (
+                    <div key={p.provider_id} className="flex items-center gap-2 glass-panel rounded-full pr-3">
+                      <img src={p.logoUrl} alt={p.provider_name} className="h-8 w-8 rounded-full object-cover" />
+                      <span className="font-body text-xs font-medium">{p.provider_name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <p className="font-body text-sm leading-relaxed text-muted-foreground mb-6">{series.overview}</p>
+
+            {/* Enhanced Details Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+              {series.spokenLanguages && series.spokenLanguages.length > 0 && (
+                <div className="glass-panel rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Globe className="h-3 w-3 text-muted-foreground" />
+                    <span className="font-heading text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Languages</span>
+                  </div>
+                  <p className="font-body text-xs text-foreground">{series.spokenLanguages.slice(0, 3).join(", ")}</p>
+                </div>
+              )}
+              {series.productionCompanies && series.productionCompanies.length > 0 && (
+                <div className="glass-panel rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Film className="h-3 w-3 text-muted-foreground" />
+                    <span className="font-heading text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Studio</span>
+                  </div>
+                  <p className="font-body text-xs text-foreground">{series.productionCompanies.slice(0, 2).join(", ")}</p>
+                </div>
+              )}
+              {series.networks && series.networks.length > 0 && (
+                <div className="glass-panel rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Tv className="h-3 w-3 text-muted-foreground" />
+                    <span className="font-heading text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Network</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {series.networks.map((n) => (
+                      <span key={n.name} className="font-body text-xs text-foreground">{n.name}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="flex gap-3 mb-8 flex-wrap">
               {trailerUrl && (
-  <a // <--- This 'a' was missing!
-    href={trailerUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
-    style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
-  >
-    <Play className="h-4 w-4 fill-white" /> Watch Trailer
-  </a>
-)}
+                <a
+                  href={trailerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+                  style={{ background: "#A855F7", color: "#fff", boxShadow: "0 0 20px #A855F755" }}
+                >
+                  <Play className="h-4 w-4 fill-white" /> Watch Trailer
+                </a>
+              )}
               <button
                 onClick={isInVault ? onRemoveFromVault : onAddToVault}
                 className="glass-panel flex items-center gap-2 rounded-full px-6 py-3 font-heading text-sm font-semibold uppercase tracking-wider transition-all hover:border-purple-400/50 hover:text-purple-400 active:scale-95"
@@ -125,7 +187,9 @@ export default function SeriesDetail({ series, isInVault, onAddToVault, onRemove
 
             {series.cast && series.cast.length > 0 && (
               <div>
-                <h3 className="font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">Cast</h3>
+                <h3 className="font-heading text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5" /> Cast
+                </h3>
                 <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
                   {series.cast.map((member) => (
                     <div key={member.name} className="flex flex-col items-center gap-1.5 shrink-0 w-16">

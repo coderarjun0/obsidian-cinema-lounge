@@ -40,10 +40,31 @@ export interface TmdbMovie {
 export interface TmdbMovieDetail extends TmdbMovie {
   genres: { id: number; name: string }[];
   runtime: number;
+  tagline?: string;
+  budget?: number;
+  revenue?: number;
+  production_companies?: { name: string }[];
+  spoken_languages?: { english_name: string }[];
+  status?: string;
+  vote_count?: number;
   videos?: { results: { key: string; site: string; type: string }[] };
   credits?: {
     cast: { id: number; name: string; character: string; profile_path: string | null }[];
   };
+  ["watch/providers"]?: {
+    results: Record<string, {
+      flatrate?: { provider_id: number; provider_name: string; logo_path: string }[];
+      rent?: { provider_id: number; provider_name: string; logo_path: string }[];
+      buy?: { provider_id: number; provider_name: string; logo_path: string }[];
+    }>;
+  };
+}
+
+export interface WatchProvider {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string;
+  logoUrl: string;
 }
 
 export interface Movie {
@@ -58,6 +79,14 @@ export interface Movie {
   runtime?: number;
   trailerKey?: string;
   cast?: { name: string; character: string; imageUrl: string }[];
+  watchProviders?: WatchProvider[];
+  tagline?: string;
+  budget?: number;
+  revenue?: number;
+  productionCompanies?: string[];
+  spokenLanguages?: string[];
+  status?: string;
+  voteCount?: number;
 }
 
 const GENRE_MAP: Record<number, string> = {
@@ -105,9 +134,23 @@ export async function searchMovies(query: string, page = 1): Promise<PaginatedRe
   return { movies: data.results.map(mapBasicMovie), totalPages: Math.min(data.total_pages, 20) };
 }
 
+function mapProviders(data: TmdbMovieDetail["watch/providers"] | TmdbSeriesDetail["watch/providers"]): WatchProvider[] {
+  if (!data?.results) return [];
+  // Prefer US, fallback to GB, then first available
+  const region = data.results["US"] ?? data.results["GB"] ?? Object.values(data.results)[0];
+  if (!region) return [];
+  const providers = region.flatrate ?? region.rent ?? region.buy ?? [];
+  return providers.slice(0, 5).map((p) => ({
+    provider_id: p.provider_id,
+    provider_name: p.provider_name,
+    logo_path: p.logo_path,
+    logoUrl: `${IMG}/w92${p.logo_path}`,
+  }));
+}
+
 export async function getMovieDetail(id: number): Promise<Movie> {
   const m = await tmdbFetch<TmdbMovieDetail>(
-    `/movie/${id}?language=en-US&append_to_response=videos,credits`
+    `/movie/${id}?language=en-US&append_to_response=videos,credits,watch/providers`
   );
   const trailer = m.videos?.results.find(
     (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -123,12 +166,50 @@ export async function getMovieDetail(id: number): Promise<Movie> {
     genres: m.genres.map((g) => g.name),
     runtime: m.runtime,
     trailerKey: trailer?.key,
+    tagline: m.tagline || undefined,
+    budget: m.budget || undefined,
+    revenue: m.revenue || undefined,
+    productionCompanies: m.production_companies?.map((c) => c.name).filter(Boolean),
+    spokenLanguages: m.spoken_languages?.map((l) => l.english_name).filter(Boolean),
+    status: m.status || undefined,
+    voteCount: m.vote_count || undefined,
+    watchProviders: mapProviders(m["watch/providers"]),
     cast: m.credits?.cast.slice(0, 8).map((c) => ({
       name: c.name,
       character: c.character,
       imageUrl: profileUrl(c.profile_path),
     })),
   };
+}
+
+// Lightweight provider fetch for card hover (cached)
+const providerCache = new Map<string, WatchProvider[]>();
+
+export async function getWatchProviders(id: number, type: "movie" | "tv"): Promise<WatchProvider[]> {
+  const key = `${type}-${id}`;
+  if (providerCache.has(key)) return providerCache.get(key)!;
+  try {
+    const data = await tmdbFetch<{
+      results: Record<string, {
+        flatrate?: { provider_id: number; provider_name: string; logo_path: string }[];
+        rent?: { provider_id: number; provider_name: string; logo_path: string }[];
+        buy?: { provider_id: number; provider_name: string; logo_path: string }[];
+      }>;
+    }>(`/${type}/${id}/watch/providers`);
+    const region = data.results["US"] ?? data.results["GB"] ?? Object.values(data.results)[0];
+    if (!region) { providerCache.set(key, []); return []; }
+    const providers = (region.flatrate ?? region.rent ?? region.buy ?? []).slice(0, 4).map((p) => ({
+      provider_id: p.provider_id,
+      provider_name: p.provider_name,
+      logo_path: p.logo_path,
+      logoUrl: `${IMG}/w92${p.logo_path}`,
+    }));
+    providerCache.set(key, providers);
+    return providers;
+  } catch {
+    providerCache.set(key, []);
+    return [];
+  }
 }
 
 // ── TV / Series ───────────────────────────────────────────────────────
@@ -149,10 +230,17 @@ export interface TmdbSeriesDetail extends TmdbSeries {
   episode_run_time: number[];
   number_of_seasons: number;
   number_of_episodes: number;
+  tagline?: string;
+  status?: string;
+  vote_count?: number;
+  production_companies?: { name: string }[];
+  spoken_languages?: { english_name: string }[];
+  networks?: { name: string; logo_path: string | null }[];
   videos?: { results: { key: string; site: string; type: string }[] };
   credits?: {
     cast: { id: number; name: string; character: string; profile_path: string | null }[];
   };
+  ["watch/providers"]?: TmdbMovieDetail["watch/providers"];
 }
 
 export interface Series {
@@ -169,6 +257,13 @@ export interface Series {
   numberOfSeasons?: number;
   numberOfEpisodes?: number;
   cast?: { name: string; character: string; imageUrl: string }[];
+  watchProviders?: WatchProvider[];
+  tagline?: string;
+  status?: string;
+  voteCount?: number;
+  productionCompanies?: string[];
+  spokenLanguages?: string[];
+  networks?: { name: string; logoUrl: string }[];
 }
 
 const TV_GENRE_MAP: Record<number, string> = {
@@ -220,7 +315,7 @@ export async function searchSeries(query: string, page = 1): Promise<PaginatedSe
 
 export async function getSeriesDetail(id: number): Promise<Series> {
   const s = await tmdbFetch<TmdbSeriesDetail>(
-    `/tv/${id}?language=en-US&append_to_response=videos,credits`
+    `/tv/${id}?language=en-US&append_to_response=videos,credits,watch/providers`
   );
   const trailer = s.videos?.results.find(
     (v) => v.site === "YouTube" && v.type === "Trailer"
@@ -238,6 +333,16 @@ export async function getSeriesDetail(id: number): Promise<Series> {
     trailerKey: trailer?.key,
     numberOfSeasons: s.number_of_seasons,
     numberOfEpisodes: s.number_of_episodes,
+    tagline: s.tagline || undefined,
+    status: s.status || undefined,
+    voteCount: s.vote_count || undefined,
+    productionCompanies: s.production_companies?.map((c) => c.name).filter(Boolean),
+    spokenLanguages: s.spoken_languages?.map((l) => l.english_name).filter(Boolean),
+    networks: s.networks?.slice(0, 3).map((n) => ({
+      name: n.name,
+      logoUrl: n.logo_path ? `${IMG}/w92${n.logo_path}` : "",
+    })),
+    watchProviders: mapProviders(s["watch/providers"]),
     cast: s.credits?.cast.slice(0, 8).map((c) => ({
       name: c.name,
       character: c.character,
